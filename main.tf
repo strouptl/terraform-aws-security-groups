@@ -284,6 +284,19 @@ resource "aws_security_group_rule" "workers_local_traffic" {
   protocol          = "-1"
 }
 
+# Output
+output "web_servers" {
+  value = aws_security_group.web_servers
+}
+
+output "workers" {
+  value = aws_security_group.workers
+}
+
+output "load_balancers" {
+  value = aws_security_group.load_balancers
+}
+
 output "database_instances" {
   value = aws_security_group.database_instances
 }
@@ -292,14 +305,6 @@ output "redis_instances" {
   value = aws_security_group.redis_instances
 }
 
-output "load_balancers" {
-  value = aws_security_group.load_balancers
-}
-
-output "web_servers" {
-  value = aws_security_group.web_servers
-}
-
-output "workers" {
-  value = aws_security_group.workers
+output "elasticsearch_instances" {
+  value = aws_security_group.elasticsearch_instances
 }
