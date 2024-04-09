@@ -23,7 +23,7 @@ locals {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 
-# PostgreSQL
+# Database Instances
 resource "aws_security_group" "database_instances" {
   name        = "${local.prefix}database-instances"
   description = "Allow HTTP/HTTPS inbound traffic from the internet"
@@ -60,7 +60,7 @@ resource "aws_security_group_rule" "postgresql_from_workers" {
   protocol          = "tcp"
 }
 
-# Redis
+# Redis Instances
 resource "aws_security_group" "redis_instances" {
   name        = "${local.prefix}redis-instances"
   description = "Allow Redis traffic"
@@ -87,7 +87,7 @@ resource "aws_security_group_rule" "redis_from_workers" {
   protocol          = "tcp"
 }
 
-# Elasticsearch
+# Elasticsearch Instances
 resource "aws_security_group" "elasticsearch_instances" {
   name        = "${local.prefix}elasticsearch-instances"
   description = "Allow HTTPS traffic from Web Servers and Workers"
@@ -282,33 +282,6 @@ resource "aws_security_group_rule" "workers_local_traffic" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-}
-
-# SMTP Endpoints (internal)
-resource "aws_security_group" "smtp_endpoint" {
-  name        = "${local.prefix}smtp-endpoint"
-  description = "Allow SMTP traffic from local IP addresses"
-  vpc_id = data.aws_vpc.selected.id
-}
-
-resource "aws_security_group_rule" "smtp_endpoint_in" {
-  security_group_id = aws_security_group.smtp_endpoint.id
-  description       = "SMTP traffic from local subnets"
-  type              = "ingress"
-  from_port         = 587
-  to_port           = 587
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "smtp_endpoint_out" {
-  security_group_id = aws_security_group.smtp_endpoint.id
-  description       = "SMTP traffic to local subnets"
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 output "database_instances" {
