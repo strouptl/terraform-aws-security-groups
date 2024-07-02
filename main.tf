@@ -17,6 +17,16 @@ data "aws_vpc" "selected" {
   id = (var.vpc_id == "" ? data.aws_vpc.default.id : var.vpc_id)
 }
 
+variable "ssh_ipv4" {
+  type = string
+  default = "0.0.0.0/0"
+}
+
+variable "ssh_ipv6" {
+  type = string
+  default = "::/0"
+}
+
 locals {
   prefix = (var.name == "" ? "" : "${var.name}--")
 }
@@ -185,7 +195,7 @@ resource "aws_security_group_rule" "web_servers_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [var.ssh_ipv4]
 }
 
 resource "aws_security_group_rule" "web_servers_ssh_ipv6" {
@@ -195,7 +205,7 @@ resource "aws_security_group_rule" "web_servers_ssh_ipv6" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  ipv6_cidr_blocks  = ["::/0"]
+  ipv6_cidr_blocks  = [var.ssh_ipv6]
 }
 
 resource "aws_security_group_rule" "web_servers_http" {
@@ -261,7 +271,7 @@ resource "aws_security_group_rule" "workers_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
+  cidr_blocks       = [var.ssh_ipv4]
 }
 
 resource "aws_security_group_rule" "workers_ssh_ipv6" {
@@ -271,7 +281,7 @@ resource "aws_security_group_rule" "workers_ssh_ipv6" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  ipv6_cidr_blocks  = ["::/0"]
+  ipv6_cidr_blocks  = [var.ssh_ipv6]
 }
 
 resource "aws_security_group_rule" "workers_local_traffic" {
